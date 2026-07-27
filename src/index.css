@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night-950: #07060f;
+  --color-night-900: #0d0b1e;
+  --color-night-800: #151130;
+  --color-night-700: #221b4a;
+  --color-night-600: #322866;
+  --color-moon: #f2ead8;
+  --color-moon-dim: #d9cfae;
+  --color-gold: #e3c778;
+  --color-mist: #9d94c4;
+  --color-mist-dim: #6c6494;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-night-950);
+  color: var(--color-moon);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-night-950);
+}
+
+/* Grano de película sobre todo el sitio */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Estrellas: parpadeo por CSS, más barato que animarlas por JS */
+@keyframes twinkle {
+  0%, 100% { opacity: var(--star-min, 0.2); }
+  50% { opacity: var(--star-max, 0.9); }
+}
+
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--color-moon);
+  animation: twinkle var(--star-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+@keyframes drift {
+  from { transform: translateX(-15%); }
+  to { transform: translateX(115vw); }
+}
+
+.cloud {
+  animation: drift var(--cloud-dur, 90s) linear infinite;
+  animation-delay: var(--cloud-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star, .cloud {
+    animation: none;
+  }
+}
