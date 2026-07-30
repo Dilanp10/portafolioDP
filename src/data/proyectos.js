@@ -60,4 +60,17 @@ export const proyectos = [
     destacado: false,
     escena: 'arbolNodos',
   },
+  {
+    id: 'gamedeal-hub',
+    nombre: 'GameDeal Hub',
+    lema: 'Agrega y compara juegos y ofertas',
+    descripcion:
+      'API REST backend que unifica RAWG (metadatos de videojuegos) y CheapShark (precios y ofertas) en un único endpoint. Construida con Spec-Driven Development (Contract-First), arquitectura limpia y 31 tests automatizados.',
+    tech: ['Node.js', 'TypeScript', 'Fastify', 'Zod'],
+    repo: 'https://github.com/Dilanp10/gamedeal-hub',
+    demo: 'https://gamedeal-hub.onrender.com/docs',
+    destacado: false,
+    escena: 'cajas',
+    nota: 'API REST puro sin frontend: Swagger UI interactivo en /docs. Backend deployado en Render, actualmente con RAWG placeholder key (cuando consigas la key real, tendrá ratings y géneros).',
+  },
 ]
