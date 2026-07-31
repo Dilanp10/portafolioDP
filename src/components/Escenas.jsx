@@ -223,7 +223,92 @@ function ArbolNodos({ hovered }) {
   )
 }
 
-const escenas = { montanas: Montanas, libro: Libro, mascota: Mascota, cajas: Cajas, arbolNodos: ArbolNodos }
+function Mando({ hovered }) {
+  const boton = (cx, cy, delay, color = 'var(--color-gold)') => (
+    <motion.circle
+      cx={cx}
+      cy={cy}
+      r="6"
+      fill={color}
+      animate={{ opacity: hovered ? [0.35, 1, 0.35] : 0.6, scale: hovered ? [1, 1.25, 1] : 1 }}
+      transition={
+        hovered
+          ? { duration: 0.9, repeat: Infinity, ease: 'easeInOut', delay }
+          : { duration: 0.3 }
+      }
+      style={{ originX: `${cx}px`, originY: `${cy}px` }}
+    />
+  )
+
+  const etiqueta = (x, y, s, delay) => (
+    <motion.g
+      style={{ x, y, scale: s }}
+      animate={{ rotate: hovered ? [-17, 17, -17] : [-6, 6, -6] }}
+      transition={{
+        duration: hovered ? 1 : 4.5 + delay,
+        repeat: Infinity,
+        ease: 'easeInOut',
+        delay: delay * 0.5,
+      }}
+    >
+      <line x1="0" y1="0" x2="0" y2="18" stroke="var(--color-mist)" strokeWidth="1.5" opacity="0.55" />
+      <g transform="translate(-22, 18)">
+        <path
+          d="M14 0 L40 0 A5 5 0 0 1 45 5 L45 27 A5 5 0 0 1 40 32 L14 32 L0 16 Z"
+          fill="var(--color-moon)"
+        />
+        <circle cx="11" cy="16" r="3" fill="var(--color-night-900)" />
+        <g stroke="var(--color-night-900)" strokeWidth="2" fill="none" strokeLinecap="round">
+          <circle cx="24" cy="11" r="3" />
+          <circle cx="34" cy="21" r="3" />
+          <line x1="36" y1="8" x2="22" y2="24" />
+        </g>
+      </g>
+    </motion.g>
+  )
+
+  return (
+    <svg viewBox="0 0 400 240" fill="none" className="h-full w-full">
+      <circle cx="58" cy="52" r="17" fill="var(--color-moon)" opacity="0.4" />
+      {etiqueta(140, 34, 1, 0)}
+      {etiqueta(272, 44, 0.85, 1)}
+      <g transform="translate(200, 148)">
+        <motion.g
+          animate={{
+            rotate: hovered ? [-4, 4, -4] : [-1.5, 1.5, -1.5],
+            y: [0, -6, 0],
+          }}
+          transition={{ duration: hovered ? 1.1 : 5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <path
+            d="M-42 -26 H42 C60 -26 72 -12 74 8 C77 28 68 42 54 40 C42 38 36 24 28 14 H-28 C-36 24 -42 38 -54 40 C-68 42 -77 28 -74 8 C-72 -12 -60 -26 -42 -26 Z"
+            fill="var(--color-night-600)"
+            stroke="var(--color-mist)"
+            strokeWidth="1.5"
+          />
+          <rect x="-49" y="-10" width="22" height="8" fill="var(--color-night-800)" />
+          <rect x="-42" y="-17" width="8" height="22" fill="var(--color-night-800)" />
+          {boton(38, -18, 0)}
+          {boton(50, -6, 0.22, 'var(--color-moon)')}
+          {boton(38, 6, 0.44)}
+          {boton(26, -6, 0.66, 'var(--color-moon)')}
+          <circle cx="-8" cy="-6" r="2.5" fill="var(--color-mist)" opacity="0.6" />
+          <circle cx="8" cy="-6" r="2.5" fill="var(--color-mist)" opacity="0.6" />
+        </motion.g>
+      </g>
+      <ellipse cx="200" cy="212" rx="76" ry="6" fill="black" opacity="0.32" />
+    </svg>
+  )
+}
+
+const escenas = {
+  montanas: Montanas,
+  libro: Libro,
+  mascota: Mascota,
+  cajas: Cajas,
+  arbolNodos: ArbolNodos,
+  mando: Mando,
+}
 
 export default function Escena({ nombre, hovered }) {
   const Comp = escenas[nombre]

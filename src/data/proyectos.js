@@ -70,7 +70,7 @@ export const proyectos = [
     repo: 'https://github.com/Dilanp10/gamedeal-hub',
     demo: 'https://gamedeal-hub.onrender.com/docs',
     destacado: false,
-    escena: 'cajas',
+    escena: 'mando',
     nota: 'API REST puro sin frontend: Swagger UI interactivo en /docs. Backend deployado en Render, actualmente con RAWG placeholder key (cuando consigas la key real, tendrá ratings y géneros).',
   },
 ]
