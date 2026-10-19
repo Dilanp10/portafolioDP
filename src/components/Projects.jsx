@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useInView } from 'motion/react'
 import { proyectos } from '../data/proyectos'
 import Escena from './Escenas'
 
@@ -45,23 +45,48 @@ function Chips({ tech }) {
 
 // La "puerta": marco con escena SVG dentro, se ilumina al pasar el mouse
 // y al cruzarla te lleva a la demo (o al código si no hay demo).
-function Puerta({ p, grande = false }) {
+function Puerta({ p }) {
   const [hovered, setHovered] = useState(false)
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.6 })
+
+  // En touch no hay mouse que dispare el hover: cuando la puerta entra en
+  // foco, mostramos la animación una vez (como una muestra de lo que hace
+  // al tocarla) y la apagamos sola.
+  useEffect(() => {
+    if (!inView) return
+    if (!window.matchMedia('(pointer: coarse)').matches) return
+    setHovered(true)
+    const t = setTimeout(() => setHovered(false), 2600)
+    return () => clearTimeout(t)
+  }, [inView])
+
   return (
     <a
+      ref={ref}
       href={p.demo || p.repo}
       target="_blank"
       rel="noreferrer"
       aria-label={`Abrir ${p.nombre}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`group relative block overflow-hidden border border-mist-dim/30 bg-night-900/60 backdrop-blur-sm transition-all duration-500 hover:border-gold/60 hover:shadow-[0_0_60px_-15px_rgba(227,199,120,0.3)] ${
-        grande ? 'aspect-16/7 max-md:aspect-4/3' : 'aspect-4/3'
+      className={`relative block aspect-4/3 overflow-hidden border bg-night-900/60 backdrop-blur-sm transition-all duration-500 ${
+        hovered
+          ? 'border-gold/60 shadow-[0_0_60px_-15px_rgba(227,199,120,0.3)]'
+          : 'border-mist-dim/30'
       }`}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,var(--color-night-700)_0%,transparent_60%)] opacity-60 transition-opacity duration-500 group-hover:opacity-100" />
+      <div
+        className={`absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,var(--color-night-700)_0%,transparent_60%)] transition-opacity duration-500 ${
+          hovered ? 'opacity-100' : 'opacity-60'
+        }`}
+      />
       <Escena nombre={p.escena} hovered={hovered} />
-      <span className="absolute bottom-3 right-4 text-[10px] uppercase tracking-[0.25em] text-gold opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <span
+        className={`absolute bottom-3 right-4 text-[10px] uppercase tracking-[0.25em] text-gold transition-opacity duration-300 ${
+          hovered ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         {p.demo ? 'Entrar al sueño ↗' : 'Ver código ↗'}
       </span>
     </a>
@@ -69,8 +94,6 @@ function Puerta({ p, grande = false }) {
 }
 
 export default function Projects() {
-  const [principal, ...resto] = proyectos
-
   return (
     <section id="proyectos" className="relative mx-auto max-w-6xl px-6 py-28 md:py-40">
       <motion.header
@@ -88,42 +111,14 @@ export default function Projects() {
         </h2>
       </motion.header>
 
-      {/* Proyecto principal: Haku */}
-      <motion.article
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 1 }}
-        className="mb-20 md:mb-28"
-      >
-        <Puerta p={principal} grande />
-        <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-xl">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-gold">
-              {principal.lema}
-            </p>
-            <h3 className="mt-2 font-display text-4xl text-moon md:text-5xl">
-              {principal.nombre}
-            </h3>
-            <p className="mt-4 leading-relaxed text-mist">{principal.descripcion}</p>
-            {principal.nota && (
-              <p className="mt-2 text-xs italic leading-snug text-gold/70">{principal.nota}</p>
-            )}
-            <Chips tech={principal.tech} />
-          </div>
-          <Enlaces p={principal} />
-        </div>
-      </motion.article>
-
-      {/* Resto de proyectos */}
       <div className="grid gap-14 md:grid-cols-3 md:gap-8">
-        {resto.map((p, i) => (
+        {proyectos.map((p, i) => (
           <motion.article
             key={p.id}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.9, delay: i * 0.12 }}
+            transition={{ duration: 0.9, delay: (i % 3) * 0.12 }}
           >
             <Puerta p={p} />
             <p className="mt-6 text-[10px] uppercase tracking-[0.3em] text-gold">{p.lema}</p>
