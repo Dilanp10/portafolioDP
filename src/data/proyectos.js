@@ -40,13 +40,13 @@ export const proyectos = [
     nombre: 'SuperBeto',
     lema: 'El almacén que flota en tu bolsillo',
     descripcion:
-      'Gestión integral para comercios de barrio: caja, stock, vencimientos, fiado, ganancias y proveedores, con un asistente de IA ("Beto") que responde por chat. La compu del local y el celular, siempre sincronizados.',
+      'Gestión integral para comercios de barrio en dos partes conectadas: la caja de escritorio donde se cobran las ventas, y la app móvil (la que ves acá) para administrar y seguir el negocio a distancia: stock, vencimientos, fiado, ganancias y proveedores, con un asistente de IA ("Beto") que responde por chat.',
     tech: ['React', 'Supabase', 'IA · Gemini', 'PWA'],
     repo: 'https://github.com/Dilanp10/superbeto-mobile-demo',
     demo: 'https://superbeto-mobile-demo.vercel.app',
     destacado: false,
     escena: 'cajas',
-    nota: 'La demo muestra solo la app móvil con datos de ejemplo (la caja de escritorio corre en la PC del local) y el asistente Beto está en modo vitrina. ¿Querés verla completa y en vivo? Escribime.',
+    nota: 'La demo es la segunda parte: solo administración y lectura de movimientos, no se cobran ventas (eso vive en la caja de escritorio). Datos de ejemplo y el asistente Beto en modo vitrina. ¿Querés verla completa y en vivo? Escribime.',
   },
   {
     id: 'correlativa',
