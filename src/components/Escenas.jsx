@@ -5,68 +5,93 @@ const flotar = (delay = 0, dist = 8, dur = 5) => ({
   transition: { duration: dur, repeat: Infinity, ease: 'easeInOut', delay },
 })
 
-function Montanas() {
+const ESTRELLAS = [
+  [40, 40, 1.6],
+  [80, 25, 1.2],
+  [130, 55, 1],
+  [260, 35, 1.3],
+  [352, 112, 1.1],
+  [20, 92, 1],
+]
+
+// Haku es el proyecto principal (la puerta grande): el cielo cobra vida al
+// pasar el mouse — estrellas más despiertas, una estrella fugaz cruza el
+// cielo, el resplandor del sol/luna crece, y el pin del mapa (Haku "te
+// ubica") pulsa con un anillo de ubicación.
+function Montanas({ hovered }) {
   return (
     <svg viewBox="0 0 400 240" fill="none" className="h-full w-full">
+      {ESTRELLAS.map(([cx, cy, r], i) => (
+        <motion.circle
+          key={i}
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="var(--color-mist)"
+          animate={{ opacity: hovered ? [0.3, 1, 0.3] : [0.15, 0.5, 0.15] }}
+          transition={{
+            duration: hovered ? 1.2 + i * 0.15 : 3 + i * 0.4,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: i * 0.25,
+          }}
+        />
+      ))}
+
+      <motion.circle
+        cx="310"
+        cy="60"
+        r="48"
+        stroke="var(--color-gold)"
+        strokeWidth="1"
+        animate={{ opacity: hovered ? [0.25, 0.55, 0.25] : 0.3, scale: hovered ? [1, 1.15, 1] : 1 }}
+        transition={{ duration: hovered ? 2 : 0.3, repeat: hovered ? Infinity : 0, ease: 'easeInOut' }}
+        style={{ originX: '310px', originY: '60px' }}
+      />
       <circle cx="310" cy="60" r="34" fill="var(--color-gold)" opacity="0.85" />
-      <circle cx="310" cy="60" r="48" stroke="var(--color-gold)" strokeWidth="1" opacity="0.3" />
+
       <path d="M-10 240 L90 110 L150 190 L220 80 L300 240 Z" fill="var(--color-night-700)" />
       <path d="M120 240 L230 130 L320 240 Z" fill="var(--color-night-600)" opacity="0.8" />
-      <path d="M220 80 L232 98 L244 116" stroke="var(--color-moon)" strokeWidth="2.5" opacity="0.3" strokeLinecap="round" />
-      <motion.g {...flotar(0, 10, 4.5)}>
+
+      {/* estrella fugaz: sólo cruza el cielo en hover */}
+      <motion.path
+        d="M220 80 L232 98 L244 116"
+        stroke="var(--color-moon)"
+        strokeWidth="2.5"
+        opacity="0.3"
+        strokeLinecap="round"
+        animate={
+          hovered
+            ? { x: [0, 90], y: [0, 46], opacity: [0, 0.9, 0] }
+            : { x: 0, y: 0, opacity: 0.3 }
+        }
+        transition={
+          hovered
+            ? { duration: 1.1, repeat: Infinity, ease: 'easeOut', repeatDelay: 0.7 }
+            : { duration: 0.3 }
+        }
+      />
+
+      <motion.g {...flotar(0, hovered ? 6 : 10, hovered ? 2.2 : 4.5)}>
         <path
           d="M200 40 C186 40 176 51 176 64 C176 82 200 104 200 104 C200 104 224 82 224 64 C224 51 214 40 200 40 Z"
           fill="var(--color-gold)"
         />
         <circle cx="200" cy="63" r="8" fill="var(--color-night-900)" />
       </motion.g>
-      <ellipse cx="200" cy="116" rx="18" ry="3.5" fill="black" opacity="0.4" />
-    </svg>
-  )
-}
+      {/* anillo de ubicación del pin, sólo visible en hover */}
+      <motion.circle
+        cx="200"
+        cy="64"
+        r="16"
+        stroke="var(--color-gold)"
+        strokeWidth="1.5"
+        animate={{ opacity: hovered ? [0.15, 0.6, 0.15] : 0, scale: hovered ? [1, 1.5, 1] : 1 }}
+        transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ originX: '200px', originY: '64px' }}
+      />
 
-function Libro({ hovered }) {
-  return (
-    <svg viewBox="0 0 400 240" fill="none" className="h-full w-full">
-      <circle cx="88" cy="52" r="22" fill="var(--color-moon)" opacity="0.5" />
-      <motion.g {...flotar(0, 8, 5)}>
-        <motion.path
-          animate={{
-            d: hovered
-              ? 'M100 155 C140 130 185 130 200 148 C215 130 260 130 300 155 L300 176 C260 146 215 146 200 164 C185 146 140 146 100 176 Z'
-              : 'M110 160 C150 138 190 138 200 150 C210 138 250 138 290 160 L290 176 C250 154 210 154 200 166 C190 154 150 154 110 176 Z',
-          }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-          fill="var(--color-moon)"
-        />
-        <path d="M200 150 L200 166" stroke="var(--color-night-900)" strokeWidth="2" />
-      </motion.g>
-      {[0, 1, 2].map((i) => (
-        <motion.path
-          key={i}
-          d="M0 0 Q6 -7 12 0 Q18 -7 24 0"
-          stroke="var(--color-moon)"
-          strokeWidth="2.5"
-          fill="none"
-          style={{ x: 210 + i * 42, y: 110 - i * 26 }}
-          animate={
-            hovered
-              ? { x: 195 + (i - 1) * 5, y: 150, opacity: 0, scale: 0.3 }
-              : {
-                  y: [110 - i * 26, 100 - i * 26, 110 - i * 26],
-                  x: [210 + i * 42, 216 + i * 42, 210 + i * 42],
-                  opacity: 0.9 - i * 0.25,
-                  scale: 1,
-                }
-          }
-          transition={
-            hovered
-              ? { duration: 0.5, delay: (2 - i) * 0.1, ease: 'easeIn' }
-              : { duration: 4 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 }
-          }
-        />
-      ))}
-      <ellipse cx="200" cy="196" rx="60" ry="6" fill="black" opacity="0.35" />
+      <ellipse cx="200" cy="116" rx="18" ry="3.5" fill="black" opacity="0.4" />
     </svg>
   )
 }
@@ -301,13 +326,91 @@ function Mando({ hovered }) {
   )
 }
 
+// Un plato se despega de la mesa y flota como holograma: el anillo de
+// escaneo AR y las líneas verticales cobran vida al pasar el mouse.
+function Holograma({ hovered }) {
+  const linea = (x, delay, key) => (
+    <motion.line
+      key={key}
+      x1={x}
+      y1="58"
+      x2={x}
+      y2="168"
+      stroke="var(--color-gold)"
+      strokeWidth="1"
+      animate={{ opacity: hovered ? [0, 0.5, 0] : 0 }}
+      transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut', delay }}
+    />
+  )
+
+  return (
+    <svg viewBox="0 0 400 240" fill="none" className="h-full w-full">
+      <circle cx="330" cy="46" r="20" fill="var(--color-moon)" opacity="0.4" />
+
+      {/* mesa */}
+      <ellipse cx="200" cy="196" rx="130" ry="16" fill="var(--color-night-700)" />
+      <ellipse
+        cx="200"
+        cy="192"
+        rx="130"
+        ry="16"
+        stroke="var(--color-mist-dim)"
+        strokeWidth="1.5"
+        opacity="0.4"
+      />
+
+      {/* anillo de escaneo AR, apoyado en la mesa */}
+      <motion.ellipse
+        cx="200"
+        cy="178"
+        rx="90"
+        ry="19"
+        stroke="var(--color-gold)"
+        strokeWidth="1.5"
+        animate={{
+          opacity: hovered ? [0.2, 0.75, 0.2] : [0.15, 0.35, 0.15],
+          scale: hovered ? [1, 1.06, 1] : 1,
+        }}
+        transition={{ duration: hovered ? 1.3 : 4, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ originX: '200px', originY: '178px' }}
+      />
+
+      {[160, 200, 240].map((x, i) => linea(x, i * 0.22, x))}
+
+      {/* el plato: flota siempre, gira como el modelo 3D real al pasar el mouse */}
+      <motion.g
+        style={{ originX: '200px', originY: '112px' }}
+        animate={{ y: [0, -10, 0], rotate: hovered ? 360 : 0 }}
+        transition={{
+          y: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' },
+          rotate: hovered
+            ? { duration: 2.6, repeat: Infinity, ease: 'linear' }
+            : { duration: 0.5, ease: 'easeOut' },
+        }}
+      >
+        <ellipse cx="200" cy="128" rx="48" ry="10" fill="var(--color-gold)" opacity="0.14" />
+        <ellipse cx="200" cy="120" rx="46" ry="15" fill="var(--color-moon)" />
+        <ellipse cx="200" cy="118" rx="30" ry="9" fill="var(--color-night-800)" opacity="0.5" />
+        <path
+          d="M186 116 Q200 123 214 116"
+          stroke="var(--color-moon-dim)"
+          strokeWidth="2"
+          opacity="0.7"
+        />
+      </motion.g>
+
+      <ellipse cx="200" cy="214" rx="112" ry="6" fill="black" opacity="0.3" />
+    </svg>
+  )
+}
+
 const escenas = {
   montanas: Montanas,
-  libro: Libro,
   mascota: Mascota,
   cajas: Cajas,
   arbolNodos: ArbolNodos,
   mando: Mando,
+  holograma: Holograma,
 }
 
 export default function Escena({ nombre, hovered }) {
