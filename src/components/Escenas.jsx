@@ -404,6 +404,123 @@ function Holograma({ hovered }) {
   )
 }
 
+// Hora Dorada: salón de belleza en Catamarca. La escena remata el nombre —
+// un sol dorado chiquito en la esquina (la "hora dorada" del atardecer) y
+// una flor radial que gira y se expande al pasar el mouse, mientras el
+// polen dorado flota alrededor como si el momento del día recién empezara.
+const PETALOS_FLOR = [0, 60, 120, 180, 240, 300]
+const POLEN = [
+  [80, 60, 1.2, 0],
+  [320, 80, 1, 0.4],
+  [60, 170, 1.4, 0.8],
+  [340, 160, 1.1, 1.2],
+  [180, 50, 0.9, 1.6],
+  [240, 190, 1.2, 2],
+]
+
+function Flor({ hovered }) {
+  return (
+    <svg viewBox="0 0 400 240" fill="none" className="h-full w-full">
+      {/* sol dorado chiquito: la "hora dorada" */}
+      <motion.circle
+        cx="340"
+        cy="52"
+        r="22"
+        fill="var(--color-gold)"
+        opacity="0.3"
+        animate={{ opacity: hovered ? [0.35, 0.65, 0.35] : [0.2, 0.4, 0.2] }}
+        transition={{ duration: hovered ? 2 : 4, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <circle cx="340" cy="52" r="12" fill="var(--color-gold)" opacity="0.95" />
+
+      {/* polen flotando: motas de luz que viajan hacia arriba */}
+      {POLEN.map(([cx, cy, r, delay], i) => (
+        <motion.circle
+          key={i}
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="var(--color-gold)"
+          opacity="0.6"
+          animate={{
+            y: hovered ? [0, -14, 0] : [0, -8, 0],
+            opacity: hovered ? [0.35, 0.9, 0.35] : [0.2, 0.55, 0.2],
+          }}
+          transition={{
+            duration: hovered ? 2.2 + i * 0.2 : 4.5 + i * 0.3,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay,
+          }}
+        />
+      ))}
+
+      {/* tallo + hoja: viven abajo del centro de la flor */}
+      <path
+        d="M200 130 Q198 170 200 210"
+        stroke="var(--color-gold)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.75"
+      />
+      <motion.path
+        d="M200 170 Q220 160 232 174 Q220 180 200 174 Z"
+        fill="var(--color-gold)"
+        opacity="0.55"
+        animate={{ rotate: hovered ? [0, 6, 0] : 0 }}
+        transition={{ duration: hovered ? 2.4 : 0.5, repeat: hovered ? Infinity : 0, ease: 'easeInOut' }}
+        style={{ originX: '200px', originY: '172px' }}
+      />
+
+      {/* la flor: 6 pétalos radiales + centro. Flota siempre, gira al hover. */}
+      <motion.g
+        style={{ originX: '200px', originY: '120px' }}
+        animate={{
+          y: [0, -6, 0],
+          rotate: hovered ? 360 : 0,
+          scale: hovered ? 1.08 : 1,
+        }}
+        transition={{
+          y: { duration: 4.5, repeat: Infinity, ease: 'easeInOut' },
+          rotate: hovered
+            ? { duration: 11, repeat: Infinity, ease: 'linear' }
+            : { duration: 0.6, ease: 'easeOut' },
+          scale: { duration: 0.5, ease: 'easeOut' },
+        }}
+      >
+        {/* halo dorado detrás de los pétalos */}
+        <motion.circle
+          cx="200"
+          cy="120"
+          r="54"
+          fill="var(--color-gold)"
+          opacity="0.08"
+          animate={{ opacity: hovered ? [0.15, 0.3, 0.15] : [0.08, 0.14, 0.08] }}
+          transition={{ duration: hovered ? 1.8 : 3.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {PETALOS_FLOR.map((rot) => (
+          <ellipse
+            key={rot}
+            cx="200"
+            cy="90"
+            rx="14"
+            ry="28"
+            fill="var(--color-gold)"
+            opacity="0.85"
+            transform={`rotate(${rot} 200 120)`}
+          />
+        ))}
+        {/* centro de la flor */}
+        <circle cx="200" cy="120" r="11" fill="var(--color-night-900)" />
+        <circle cx="200" cy="120" r="7" fill="var(--color-gold)" opacity="0.9" />
+      </motion.g>
+
+      {/* sombra proyectada */}
+      <ellipse cx="200" cy="216" rx="42" ry="5" fill="black" opacity="0.35" />
+    </svg>
+  )
+}
+
 const escenas = {
   montanas: Montanas,
   mascota: Mascota,
@@ -411,6 +528,7 @@ const escenas = {
   arbolNodos: ArbolNodos,
   mando: Mando,
   holograma: Holograma,
+  flor: Flor,
 }
 
 export default function Escena({ nombre, hovered }) {

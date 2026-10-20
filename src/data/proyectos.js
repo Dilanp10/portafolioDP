@@ -61,6 +61,19 @@ export const proyectos = [
     escena: 'arbolNodos',
   },
   {
+    id: 'hora-dorada',
+    nombre: 'Hora Dorada',
+    lema: 'Pedí turno sin salir del momento',
+    descripcion:
+      'Sistema de reservas para un salón de belleza en Catamarca, con una landing inmersiva en 3D que cuenta el servicio como un recorrido. Panel admin para la dueña, bot de WhatsApp que recuerda la cita, y reservas sin app ni cuenta.',
+    tech: ['React', 'TypeScript', 'Vite', 'Three.js', 'Supabase'],
+    repo: 'https://github.com/Dilanp10/salon3d',
+    demo: 'https://salon3d.vercel.app',
+    destacado: false,
+    escena: 'flor',
+    nota: 'Proyecto activo para una clienta real: el repo es privado y el backend se enciende cuando el salón abre al público. La demo muestra la landing con el aviso "no pudimos cargar servicios" porque Supabase todavía no está conectado.',
+  },
+  {
     id: 'gamedeal-hub',
     nombre: 'GameDeal Hub',
     lema: 'Agrega y compara juegos y ofertas',
